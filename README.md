@@ -98,6 +98,6 @@ This project is licensed under the MIT License.
 For questions or suggestions, feel free to reach out to:
 - **Name**: Mahmoud Abdelhamid
 - **Email**: mahmoudabdulhamid22@gmail.com
-- **GitHub**: https://github.com/0Xuser100
-
+- **GitHub**: [https://github.com/0Xuser100](https://github.com/0Xuser100)
+- **LinkedIn**: [https://www.linkedin.com/in/mahmoud-abdulhamid-052244230/](https://www.linkedin.com/in/mahmoud-abdulhamid-052244230/)
 ---
