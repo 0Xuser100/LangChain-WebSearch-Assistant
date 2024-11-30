@@ -4,7 +4,6 @@ from langchain_community.utilities import ArxivAPIWrapper, WikipediaAPIWrapper
 from langchain_community.tools import ArxivQueryRun, WikipediaQueryRun, DuckDuckGoSearchRun
 from langchain.agents import initialize_agent, AgentType
 from langchain.callbacks import StreamlitCallbackHandler
-from langchain.schema import RatelimitException
 import time
 import os
 from dotenv import load_dotenv
@@ -43,18 +42,22 @@ if "messages" not in st.session_state:
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg['content'])
 
-# Function to handle rate-limited tools
+# Function to handle API retries
 def safe_run(tool, query, retries=3, delay=5):
-    """Run a query safely with retries on rate-limit exceptions."""
+    """Run a query safely with retries for rate limits."""
     for attempt in range(retries):
         try:
             return tool.run(query)
-        except RatelimitException:
-            if attempt < retries - 1:
-                st.warning("Rate limit exceeded. Retrying...")
-                time.sleep(delay)
+        except Exception as e:
+            if "rate limit" in str(e).lower():  # Check for rate limit in exception message
+                if attempt < retries - 1:
+                    st.warning("Rate limit exceeded. Retrying...")
+                    time.sleep(delay)
+                else:
+                    st.error("Exceeded rate limit. Please try again later.")
+                    return None
             else:
-                st.error("Exceeded rate limit. Please try again later.")
+                st.error(f"An unexpected error occurred: {e}")
                 return None
 
 # User input handling
@@ -81,5 +84,8 @@ if prompt := st.chat_input(placeholder="What is machine learning?"):
             response = search_agent.run(st.session_state.messages, callbacks=[st_cb])
             st.session_state.messages.append({'role': 'assistant', "content": response})
             st.write(response)
-        except RatelimitException:
-            st.error("Rate limit exceeded. Please try again later.")
+        except Exception as e:
+            if "rate limit" in str(e).lower():
+                st.error("Rate limit exceeded. Please try again later.")
+            else:
+                st.error(f"An unexpected error occurred: {e}")
