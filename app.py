@@ -17,7 +17,7 @@ api_wrapper=WikipediaAPIWrapper(top_k_results=1,doc_content_chars_max=200)
 wiki=WikipediaQueryRun(api_wrapper=api_wrapper)
 
 search=DuckDuckGoSearchRun(name="Search")
-
+st.secrets["GROQ_API_KEY"]
 
 st.title("🔎 LangChain - Chat with search")
 """
